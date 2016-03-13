@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="moreOptions" class="m_container"> <!-- More Options -->
+  <div class="title-bar more-bar moreOptions-bar">
+    <ul>
+      <li><a id="today" href="#" class="popular">历史上的今天</a></li>
+      <li><a id="timeline" href="#" class="comments-recent">作品时间轴</a></li>
+      <li><a id="hot" href="#" class="comments-recent">热门标签</a></li>
+    </ul>
+  </div>
+  <div id='tab_content'></div>
+</div>
+
+<script type="text/javascript">
+
+function activeThis(target){
+  $('a.popular').removeClass('popular').addClass('comments-recent')
+  $(target).removeClass('comments-recent').addClass('popular')
+}
+
+$('#today').click(function(){
+  activeThis(this)
+  $.ajax({type:'get',
+    url:'/bellawiki/work_today',
+    success: function(data, textStatus){
+      $('#tab_content').html(data)
+    }})
+})
+
+$('#timeline').click(function(){
+  activeThis(this)
+  $.ajax({type:'get',
+    url:'/bellawiki/time_line',
+    success: function(data, textStatus){
+      $('#tab_content').html(data)
+      
+    }})
+})
+
+$('#hot').click(function(){
+  activeThis(this)
+  $.ajax({type:'get',
+    url:'/bellawiki/tag_index',
+    success: function(data, textStatus){
+      $('#tab_content').html(data)
+    }
+  })
+})
+
+$('#today').click()
+
+</script>
+{% endblock %}

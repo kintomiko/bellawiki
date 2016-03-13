@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}
+- {{ work.title }}
+{% endblock %}
+
+{% block script %}
+<script>
+$('.datepicker').datepicker()
+</script>
+{% endblock %}
+{% block navi %}
+-> <a href="/bellawiki/work_details/?wtitle={{work.title}}">{{work.title}}</a>
+{% endblock %}
+
+{% block content %}
+{% load add_css %}
+{% load add_attr %}
+<div class='row'>
+	<div class="col-sm-6">
+		<div class="row newPostContent m_container">
+			<form id="f_work_details" name='work_details'>
+				<h1>{{ work_form.title.value }}</h1>
+				<div style="display:none">
+					{{ work_form.title }}
+				</div>
+				{{ work_form.type.label_tag}}
+				{{ work_form.type}}
+				{{ work_form.date.label_tag}}
+				{{ work_form.date|add_css:"datepicker" }}
+				{{ work_form.desc|add_css:"post-body"}}
+			</form>
+			<div id="tags">
+			<div id='tags_list' style='display:flex;font-weight:bold'>
+				标签: 
+				{% for f in work.tags.all %}
+				<div class="tags">
+					<span class="glyphicon glyphicon-remove remove_work_tag" aria-hidden="true">{{f.name}}</span>
+				</div>
+				{% endfor %}
+			</div>
+			<form id='f_add_work_tag' name='tag_add'>
+				<input type='TEXT' id='tag_wtitle' name='wtitle' maxlength="255" value="{{ work.title }}" style='display:none'></input>
+				<input id='add_work_tag_input' name='name'></input>
+			</form>
+			</div>
+			<a id="work_save_btn" class="m_btn">保存</a>
+			<hr/>
+		</div>
+	</div>
+	<div class="col-sm-6" style="padding-left:30px">
+		<div id="relatedPosts" class="m_container"> <!-- Related Posts -->
+			<div class="bar title-bar">
+				<h2>文件</h2>
+			</div>
+			{% for f in work.files.all %}
+			<div class="rpost">
+				<p><a href="/bellawiki/file_details?id={{f.id}}">[{{f.get_type_display}}] {{f.name}}</a> <br>
+					<a href="/bellawiki/file_details?id={{f.id}}">{{f.desc}}</a></p>
+			</div>
+			<a href={{f.url}} target="_blank"><h7>文件链接</a>
+			{% empty %}
+				(暂无文件)
+			{% endfor %}
+				<a href="#add_file_model" role="button" class="m_btn" data-toggle="modal"><h2>添加文件</h2></a>
+		</div>
+
+	</div>
+
+	<!-- Button to trigger modal -->
+
+	<!-- Modal -->
+	<div id="add_file_model" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加文件</h4>
+				</div>
+				<div class="modal-body">
+					<form id='f_files' name='files' action='/bellawiki/work_details/add_file' class="form-horizontal">
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.url.label_tag }}(*)
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.url|add_css:"form-control" }}
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.type.label_tag }}
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.type|add_css:"form-control" }}
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.quality.label_tag }}
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.quality|add_css:"form-control" }}
+							</div>
+						</div>
+<!-- 						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.date.label_tag }}
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.date|add_css:"form-control datepicker" }}
+							</div>
+						</div> -->
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.desc.label_tag }}
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.desc|add_css:"form-control" }}
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.name.label_tag }}(*)
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.name|add_css:"form-control" }}
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3">
+								{{ file_input_form.md5.label_tag }}
+							</div>
+							<div class="col-sm-9">
+								{{ file_input_form.md5|add_css:"form-control" }}
+							</div>
+						</div>
+						<input type='TEXT' id='wtitle' name='wtitle' maxlength="255" value="{{ work.title }}" style='display:none'></input>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="m_btn" data-dismiss="modal">关闭</button>
+					<button type="button" class="m_btn" data-dismiss="modal" id='add_file_btn'>添加</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script>
+
+// $.ajaxSetup({
+// 	xhrFields: {
+// 		mozSystem: true
+// 	}
+// });
+
+$('.remove_work_tag').bind('click', function(e){
+	target=this
+	$.ajax({
+		url:'/bellawiki/work_details/del_work_tag',
+		type:'post',
+		data: 'wtitle={{ work.title }}&name=' + $(this).text(),
+		statusCode: {
+			200: function() {
+				m_success('')
+				$(target).parent()[0].remove()
+			}
+		}
+	});
+	return false;
+})
+
+$('#add_work_tag_input').bind('keydown', function(e){
+	div = '<div class="tags">' + $('#add_work_tag_input').val() + '</span></div>'
+	if(e.keyCode == 13){
+		$.ajax({
+			url:'/bellawiki/work_details/add_work_tag',
+			type:'post',
+			data: $('#f_add_work_tag').serialize(),
+			statusCode: {
+				200: function() {
+					m_success('')
+					$('#add_work_tag_input').val('')
+					$('#tags_list').append(div)	
+				}
+			}
+		});
+		return false;
+	}
+})
+
+$('#work_save_btn').bind('click', function(){
+	$.ajax({
+		url:'/bellawiki/work_details/save',
+		type:'post',
+		data: $('#f_work_details').serialize(),
+		statusCode: {
+			200: function() {
+				m_success('')
+			}
+		}
+	});
+})
+
+function validate(){
+	if($('#id_url').val() == null || $('#id_url').val().trim() == '' || 
+		$('#id_name').val() == null || $('#id_name').val().trim() == '')
+		return false;
+	return true;
+}
+
+$('#add_file_btn').bind('click', function(){
+	if(!validate()){
+		m_error('文件名和url是必填的');
+		return false;
+	}
+	$.ajax({
+		url:'/bellawiki/work_details/add_file',
+		type:'post',
+		data: $('#f_files').serialize(),
+		statusCode: {
+			200: function() {
+				m_success('请刷新页面')
+			}
+		}
+	});
+ 	// $('#f_files').submit();
+ 	// $(this).modal('hide')
+ })
+
+$('#id_url').bind('paste', function(e){
+	return true;
+	$.ajax({type:'get',
+		url:'/bellawiki/proxy?url='+escape(e.originalEvent.clipboardData.getData('Text')),
+ 				// headers: {'Referer':'http://pan.baidu.com/disk/home'},
+ 				statusCode: {
+ 					200: function(data) {
+ 						data=data.replace(/\\\\/g, '\\').replace(/\\\"/g, '\\')
+ 						md5 = data.substr(data.lastIndexOf('md5')+6, 32)
+ 						filename=data.substring(data.indexOf('server_filename')+18, data.indexOf('size', data.indexOf('server_filename'))-3)
+ 						var r = /\\u([\d\w]{4})/gi;
+ 						filename = filename.replace(r, function (match, grp) {
+ 							return String.fromCharCode(parseInt(grp, 16)); } );
+ 						filename = unescape(filename);
+ 						$('#id_md5').val(md5)
+ 						if ($('#id_name').val()==''){
+ 							$('#id_name').val(filename)
+ 						}
+ 					}
+ 				}
+ 			})
+})
+</script>
+
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}
+ - {{ file.name }}
+{% endblock %}
+
+{% block script %}
+<script>
+$('.datepicker').datepicker()
+</script>
+{% endblock %}
+{% block navi %}
+ -> <a href="/bellawiki/file_details?id={{file.id}}">{{file.name}}</a>
+{% endblock %}
+
+{% block content %}
+{% load add_css %}
+{% load add_attr %}
+<div class="row">
+	<div class="col-md-8">
+		<h3>文件</h3>
+		<form id='f_files' name='files' action='/bellawiki/file_details/add_file' class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.url.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.url|add_css:"form-control" }}
+				</div>
+			</div>
+			<div style="color:blue">麻烦大家直接粘贴百度链接，不要手敲 :)</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.type.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.type|add_css:"form-control" }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.quality.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.quality|add_css:"form-control" }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.desc.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.desc|add_css:"form-control" }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.date.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.date|add_css:"form-control datepicker" }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.name.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.name|add_css:"form-control" }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+				{{ file_form.md5.label_tag }}
+				</div>
+				<div class="col-sm-9">
+				{{ file_form.md5|add_css:"form-control" }}
+				</div>
+			</div>
+			<input type='TEXT' id='file_id' name='id' maxlength="255" value="{{ file.id }}" style='display:none'></input>
+		</form>
+		<div id='tags_list' style='display:flex;font-weight:bold'>
+			标签: 
+	{% for f in file.tags.all %}
+			<div class="tags">
+				<span class="glyphicon glyphicon-remove remove_file_tag" aria-hidden="true">{{f.name}}</span>
+			</div>
+	{% endfor %}
+		</div>
+		<form id='f_add_file_tag' name='tag_add'>
+			<input type='TEXT' id='tag_id' name='id' maxlength="255" value="{{ file.id }}" style='display:none'></input>
+			<input id='add_file_tag_input' name='name'></input>
+		</form>
+		<input id="file_save_btn" type='button' class="btn btn-primary" value='保存'></input>
+		<div id='file_works'>此作品被收录在作品：{% for work in file.works.all %}<a href="/bellawiki/work_details/?wtitle={{ work.title }}">{{ work.title }}</a>{% endfor %}</div>
+	</div>
+</div>
+
+<script>
+
+// $.ajaxSetup({
+// 	xhrFields: {
+// 		mozSystem: true
+// 	}
+// });
+
+$('#file_save_btn').bind('click', function(){
+	$.ajax({
+		url:'/bellawiki/file_details/save_file',
+		type:'post',
+		data: $('#f_files').serialize(),
+		success: function(){
+			m_success('')
+		}
+	});
+})
+
+$('.remove_file_tag').bind('click', function(e){
+	target=this
+	$.ajax({
+			url:'/bellawiki/file_details/del_file_tag',
+			type:'post',
+			data: 'id={{ file.id }}&name=' + $(this).text(),
+			success: function(){
+				m_success('')
+				$(target).parent()[0].remove()
+			}
+		});
+		return false;
+})
+
+$('#add_file_tag_input').bind('keydown', function(e){
+	div = '<div class="tags">' + $('#add_file_tag_input').val() + '</span></div>'
+	if(e.keyCode == 13){
+		$.ajax({
+			url:'/bellawiki/file_details/add_file_tag',
+			type:'post',
+			data: $('#f_add_file_tag').serialize(),
+			success: function(){
+				m_success('')
+				$('#add_file_tag_input').val('')
+				$('#tags_list').append(div)	
+			}
+		});
+		return false;
+	}
+})
+
+$('#id_url').bind('paste', function(e){
+	return true;
+	$.ajax({type:'get',
+		url:'/bellawiki/proxy?url='+escape(e.originalEvent.clipboardData.getData('Text')),
+ 				// headers: {'Referer':'http://pan.baidu.com/disk/home'},
+ 				success: function(data){
+					data=data.replace(/\\\\/g, '\\').replace(/\\\"/g, '\\')
+ 					md5 = data.substr(data.lastIndexOf('md5')+6, 32)
+ 					filename=data.substring(data.indexOf('server_filename')+18, data.indexOf('size', data.indexOf('server_filename'))-3)
+ 					var r = /\\u([\d\w]{4})/gi;
+ 					filename = filename.replace(r, function (match, grp) {
+ 						return String.fromCharCode(parseInt(grp, 16)); } );
+ 					filename = unescape(filename);
+ 					$('#id_md5').val(md5)
+					if ($('#id_name').val()==''){
+ 						$('#id_name').val(filename)
+					}
+ 				}
+ 			}
+ 			)
+})
+</script>
+
+{% endblock %}

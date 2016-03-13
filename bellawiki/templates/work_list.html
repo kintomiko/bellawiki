@@ -1,0 +1,34 @@
+	<div id="works" class="m_container relatedPosts"> <!-- Related Posts -->
+		<div class="bar title-bar">
+			<h2>作品</h2>
+		</div>
+			<a href="/bellawiki/work_details/?wtitle={{key}}">创建作品{{ key }}</a>
+		{% if works %}
+			{% if works|length %}
+				{% for work in works %}
+					<div class="rpost">
+						<p><a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.title }}</a><br>
+							<a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.desc }}</a></p>
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endif %}
+
+	</div>
+
+		<div id="works" class="m_container relatedPosts"> <!-- Related Posts -->
+		<div class="bar title-bar">
+			<h2>文件</h2>
+		</div>
+		{% if files %}
+			{% if files|length %}
+				{% for file in files %}
+					<div class="rpost">
+						<p><a href='/bellawiki/file_details?id={{file.id}}'>{{file.name}}</a><br>
+							<a href='/bellawiki/file_details?id={{file.id}}'>{{ file.desc }}</a></p>
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endif %}
+
+	</div>

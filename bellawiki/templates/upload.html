@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+{% load add_css %}
+
+<input type="file" id='fileInput' name="file"/><br/>
+
+<div id='fileDisplayArea'></div>
+
+<input type='button' id='get_info_btn' value='批量获取md5和文件名' style='display:none'></input>
+<input type='button' id='upload_file_btn' value='上传文件' style='display:none'></input>
+操作结果: <div id='msg' style='color:red'></div>
+
+<script>
+
+$('#get_info_btn').bind('click', function(){
+	len = $('#file_tb tr').length
+	result=''
+	lines=window.content.split(/[\r\n]+/g);
+	$('#file_tb tr').each(function(i){
+		if(i>0){
+			$.ajax({type:'get',
+				url:'/bellawiki/proxy?url='+$($('#file_tb tr')[i]).children('td')[1].textContent,
+ 				// headers: {'Referer':'http://pan.baidu.com/disk/home'},
+ 				success: function(data){
+ 					md5 = data.substr(data.lastIndexOf('md5')+6, 32)
+ 					filename=data.substring(data.indexOf('server_filename')+18, data.indexOf('size', data.indexOf('server_filename'))-3)
+ 					var r = /\\u([\d\w]{4})/gi;
+ 					filename = filename.replace(r, function (match, grp) {
+ 						return String.fromCharCode(parseInt(grp, 16)); } );
+ 					filename = unescape(filename);
+ 					$($($('#file_tb tr')[i]).children('td')[8]).text(md5)
+ 					$($($('#file_tb tr')[i]).children('td')[7]).text(filename)
+ 					result+=lines[i]+','+filename+','+md5+'\t'
+ 				},
+ 				error: function(){
+ 					result+=lines[i]+',\t'
+ 				}
+ 			})
+		}
+	})
+	$('#upload_file_btn').show()
+	$(this).hide()
+})
+
+$('#upload_file_btn').bind('click', function(e){
+	$.ajax({
+		type:'post',
+		url:'/bellawiki/upload',
+		data:'file='+encodeURIComponent(window.result),
+		success: function(data){
+			$('#msg').text('Success')
+		},
+		error: function(data){
+			$('#msg').text('Error!')
+		}
+	})
+	$(this).hide()
+})
+
+
+
+window.onload = function() {
+	var fileInput = document.getElementById('fileInput');
+	var fileDisplayArea = document.getElementById('fileDisplayArea');
+
+	fileInput.addEventListener('change', function(e) {
+		var file = fileInput.files[0];
+		var textType = /text.*/;
+		if (file.type.match(textType)) {
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				content = reader.result;
+				var lines = content.split(/[\r\n]+/g);
+				html="<table id='file_tb' class='table table-condensed'><tbody>"
+				lines.forEach(function(line) {
+					html+='<tr>'
+					cols = line.split(',')
+					cols.forEach(function(col){
+						html+='<td>'+col+'</td>'
+					})
+					html+='<td></td></tr>'
+				});
+				html+='</tbody></table>'
+				fileDisplayArea.innerHTML = html
+			}
+
+			$('#get_info_btn').show()
+
+			reader.readAsText(file);
+		} else {
+			fileDisplayArea.innerText = "File not supported!";
+		}
+	});
+}
+</script>
+
+{% endblock %}

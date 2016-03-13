@@ -1,0 +1,52 @@
+{% load lunartag %}
+<div>
+	<div id="relatedPosts" class="m_container"> <!-- Related Posts -->
+		<div class="bar title-bar">
+			<h2>明天</h2>
+		</div>
+		{% for work in tworks %}
+		<div class="rpost">
+			<p><a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.title }} - {{ work.date|date:"Y年m月d日" }}</a> <br>
+				<a href="#20">{{ work.desc }}</a></p>
+		</div>
+		{% empty %}
+			<h3>无</h3>
+		{% endfor %}
+
+
+	</div>
+
+		<!-- <h4>公历上的今天</h4> -->
+	<div id="relatedPosts" class="m_container"> <!-- Related Posts -->
+		<div class="bar title-bar">
+			<h2>今天</h2>
+		</div>
+		{% for work in works %}
+		<div class="rpost">
+			<p><a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.title }} - {{ work.date|date:"Y年m月d日" }}</a> <br>
+				<a href="#20">{{ work.desc }}</a></p>
+		</div>
+		{% empty %}
+			<h3>无</h3>
+		{% endfor %}
+
+
+	</div>
+<!-- 	{% for work in works %}
+		<div class="thumbnail">
+			<div class="caption">
+				<h3><a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.title }}</a> - {{ work.date }}</h3>
+				<p>{{ work.desc }}</p>
+			</div>
+		</div>
+		{% endfor %} -->
+<!-- 	<h4>农历上的今天</h4>
+	{% for work in lworks %}
+		<div class="thumbnail">
+			<div class="caption">
+				<h3><a href="/bellawiki/work_details/?wtitle={{work.title}}">{{ work.title }}</a> - {{ work.date }} - 农历{{ work.date|lunartag }}</h3>
+				<p>{{ work.desc }}</p>
+			</div>
+		</div>
+		{% endfor %} -->
+</div>

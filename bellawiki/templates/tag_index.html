@@ -1,0 +1,44 @@
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			{% for tag in tags %}
+			{% if tag.type == 301 %}
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="heading{{tag.id}}">
+					<h4 class="panel-title">
+						<a class="{% if tag.id != tags.0.id %}collapsed{% endif %}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{tag.id}}" aria-expanded={% if tag.id != tags.0.id %}"true"{% else %}"false"{% endif %} aria-controls="collapse{{tag.id}}">
+							标签为<font size=4>"{{tag.name}}"</font>的{{tag.get_type_display}} ({{tag.works.all|length}})
+						</a>
+					</h4>
+				</div>
+				<div id="collapse{{tag.id}}" class="panel-collapse collapse {% if tag.id == tags.0.id %}in{% endif %}" role="tabpanel" aria-labelledby="heading{{tag.id}}">
+					<div class="panel-body">
+						<ul>
+							{% for work in tag.works.all %}
+							<li><a href="/bellawiki/work_details?wtitle={{work.title}}">{{work.title}}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+			{% if tag.type == 302 %}
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="heading{{tag.id}}">
+					<h4 class="panel-title">
+						<a class="{% if tag.id != tags.0.id %}collapsed{% endif %}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{tag.id}}" aria-expanded={% if tag.id != tags.0.id %}"true"{% else %}"false"{% endif %} aria-controls="collapse{{tag.id}}">
+							标签为<font size=4>"{{tag.name}}"</font>的{{tag.get_type_display}} ({{tag.files.all|length}})
+						</a>
+					</h4>
+				</div>
+				<div id="collapse{{tag.id}}" class="panel-collapse collapse {% if tag.id == tags.0.id %}in{% endif %}" role="tabpanel" aria-labelledby="heading{{tag.id}}">
+					<div class="panel-body">
+						<ul>
+							{% for file in tag.files.all %}
+							<li><a href="/bellawiki/file_details?id={{file.id}}">{{file.name}}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+			{% endfor %}
+		</div>

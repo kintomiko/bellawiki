@@ -1,0 +1,81 @@
+<div id='instruction' style='display:none;color:red;font-size:14;font-weight:bold'>
+	<img src='/static/img/banner.jpg'></img>
+</div>
+
+<h3>作品时间轴</h3>
+<div class="row">
+	<div class="col-md-11">
+    <div id='year-nav'>
+      <ul class="nav nav-pills" id='timeline_nav'>
+        <li role="presentation" class="active"><a href="#">2014</a></li>
+        <li role="presentation"><a href="#">2013</a></li>
+        <li role="presentation"><a href="#">2012</a></li>
+        <li role="presentation"><a href="#">2011</a></li>
+        <li role="presentation"><a href="#">2010</a></li>
+        <li role="presentation"><a href="#">2009</a></li>
+        <li role="presentation"><a href="#">2008</a></li>
+        <li role="presentation" class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+            其他年份 <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li role="presentation"><a href="#">2007</a></li>
+            <li role="presentation"><a href="#">2006</a></li>
+            <li role="presentation"><a href="#">2005</a></li>
+            <li role="presentation"><a href="#">2004</a></li>
+            <li role="presentation"><a href="#">2003</a></li>
+            <li role="presentation"><a href="#">2002</a></li>
+            <li role="presentation"><a href="#">2001</a></li> 
+            <li role="presentation"><a href="#">2000</a></li> 
+            <li role="presentation"><a href="#">1999</a></li> 
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="file-timeline">
+    </div>
+  </div>
+</div>
+
+
+{% block css %}
+<link rel="stylesheet" href="/static/common/savtimeline/jquery-vertical-timeline.min.css">
+<style>
+.nofile{
+  background-color: #FF9966!important;
+}
+</style>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/common/savtimeline/jquery-vertical-timeline.libs.js"></script>
+<script type="text/javascript" src="/static/common/savtimeline/jquery-vertical-timeline.min.js"></script>
+<script>
+
+
+$('#timeline_nav a').click(function(){
+  $.getJSON('/bellawiki/file_timeline_json?year='+$(this).text(), function(data) {
+   $('.file-timeline').html('')
+   node = document.createElement('div')
+   $(node).verticalTimeline({
+    data: data,
+    width: '90%',
+    handleResize: true,
+    defaultDirection: 'oldest'
+  });
+   $('.file-timeline').html(node);
+   setTimeout(function(){$('.sort-newest').click()},500);
+   $('span.up').click(function(){
+    c = $(this).parent().children()[1].textContent;
+    $(this).parent().children()[1].textContent = parseInt(c)+1
+    $.ajax({url:'/bellawiki/work_up/', type:'post',data:'wtitle='+$(this).parent().children()[0].textContent})
+  });
+
+        //$('.vertical-timeline-buttons').hide()
+      });
+
+})
+$('#timeline_nav a')[0].click()
+
+</script>
+{% endblock %}

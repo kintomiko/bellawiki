@@ -1,0 +1,144 @@
+<html>
+<head>
+	<title>bellawiki{% block title %}{% endblock %}</title>
+	<meta name="description" content="详尽全面地收集歌手姚贝娜活动，作品等的资料">	
+	<script type="text/javascript" name="baidu-tc-cerfication" data-appid="5456354" src="http://apps.bdimg.com/cloudaapi/lightapp.js"></script>
+
+</head>
+<body>
+	<script src="/static/common/js/jquery.min.js"></script>
+	<link rel="stylesheet" href="/static/common/bootstrap-3.3.2-dist/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<!-- <link rel="stylesheet" href="/static/common/bootstrap-3.3.2-dist/css/bootstrap-theme.min.css"> -->
+
+	<link rel="stylesheet" href="/static/common/css/style.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="/static/common/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="/static/common/jquery-ui-1.11.3/jquery-ui.min.css">
+	<script src="/static/common/jquery-ui-1.11.3/jquery-ui.min.js"></script>
+	{% block css %}{% endblock %}
+	<style type="text/css">
+	.tags {
+		background: #e8e8e8;
+		color:#37a;
+		margin-left:5px;
+		cursor: pointer;
+	}
+	#mainContainer{
+		background-color:rgb(233, 240, 244);
+		padding: 20px;
+	}
+	.postOption{
+		width: 400px;
+  height: 45px;
+  margin: 0px 0px 20px;
+  padding-left: 15px;
+  font-size: 22px;
+  font-weight: bold;
+	}
+	</style>
+
+	<div id='mainContainer' class="container-fluid">
+		<div class="row">
+			<div id='search_div' class="col-md-3">
+				<div class="row">
+					<a href='/'>首页</a>
+					<a href='/bellawiki/upload_list'>上传</a>
+					{% if user.is_authenticated %}
+					欢迎：{{ user.username }} <a href="{% url 'django.contrib.auth.views.logout' %}?next={{request.path}}">退出</a>
+					{% else %}
+					修改词条请<a href="{% url 'django.contrib.auth.views.login' %}?next={{request.path}}">登录</a>
+					{% endif %}
+				</div>
+				<div class="bar row" id="messages">
+					<ul>
+                        <!-- <li><a href="#15"><span class="fontawesome-comment"></span></a></li> -->
+                        <!-- <li><a href="#16"><span class="entypo-mail"></span></a></li> -->
+                        <!-- <li><a href="#17"><span class="entypo-heart"></span></a></li> -->
+                        <li>
+								<input type='TEXT' id="search-message" name="search_key"></input>
+						</li>
+						
+                    </ul>
+                    <div class="lupa"><span class="fontawesome-search"></span></div>
+				</div>
+				<div id='result' class="row"></div>
+				<div id="work_today" class="row"></div>
+				<div id='tag_index' class="row"></div>
+				<div id='links' class="row">
+					相关链接
+					<ul>
+						<li>
+							<a href="http://blog.sina.com.cn/yaobeina" target="_blank">姚贝娜 - 新浪博客</a>
+						</li>
+						<li>
+							<a href="http://jinian.zupulu.com/jiwen/show?jwid=56952" target="_blank">著名青年歌手姚贝娜网上纪念馆 - 简介</a>
+						</li>
+						<li>
+							<a href="http://bideyuanli.com/yao" target="_blank">比的原理 - 姚贝娜歌库</a>
+						</li>
+						<li>
+							<a href="http://tieba.baidu.com/p/3498176552" target="_blank">【姚贝娜】2014年总结帖：姚贝娜的这一年之最美瞬间</a>
+						</li>
+						<li>
+							<a href="http://baike.baidu.com/view/166348.htm" target="_blank">百度百科 - 姚贝娜</a>
+						</li>
+						<li>
+							<a href="http://tieba.baidu.com/f?kw=%E5%A7%9A%E8%B4%9D%E5%A8%9C&ie=utf-8" target="_blank">百度贴吧 - 姚贝娜吧</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id='content_container' class="col-md-8" style="margin-left:20px">
+				<div id='msg' style="position:fixed;width:60%;z-index:10000"></div>
+				<h1><a href="/bellawiki">首页</a>{% block navi %}{% endblock %}</h1>
+				{% block content %}content{% endblock %}
+			</div>
+		</div>
+	</div>
+{% block script %}{% endblock %}
+<script>
+
+m_success = function(msg){
+	msg = '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>成功！</strong>' + msg + '！</div>'
+	$('#msg').html(msg)
+}
+
+m_error = function(msg){
+	msg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>出错了!</strong>'+msg+'</div>'
+	$('#msg').html(msg)
+}
+
+$(document).ajaxError(function(e){
+	m_error('服务器出错或者需要登录')
+})
+
+$(document).ajaxSuccess(function(e){
+		// if(1){
+		// 	msg = '<div class="alert alert-error"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>错误</strong>请登录!</div>'
+		// 	$('#msg').html(msg)
+		// }
+	})
+$('#search-message').bind('keydown', function(e){
+	if (e.keyCode == 13){
+		search()
+		return false
+	}
+})
+function search(){
+	$.ajax({type:'post',
+		url:'/bellawiki/work_details/search',
+		data:'search_key='+$('#search-message').val(),
+		success: function(data, textStatus){
+			$('#result').html(data)
+		}
+	})
+}
+$('#search_btn').bind('click', function(){
+	search()
+})
+	// $('#search_btn').click()
+	</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+	<script type='text/javascript' src="/static/common/js/Chart.min.js"></script>
+	<script src="/static/common/js/jquery.min.js"></script>
+	<a class='draw12' onclick='drawchart(12);' href="#">12小时数据</a>
+	<a class='draw24' onclick='drawchart(24);' href="#">24小时数据</a>
+	<a class='drawall' onclick = 'drawchart(999);' href="#" >全部小时数据</a>
+	<div id='static' style='margin-top:10px'></div>
+<script>
+Chart.defaults.global.responsive = true;
+linecanvas=''
+function drawchart(delta){
+$.getJSON('http://bellamusic.cn/poll/get_json/?hour='+delta,function(data){
+	if(linecanvas!='')$(linecanvas).remove()
+	linecanvas = document.createElement('canvas');
+	linecanvas.style.width='100%'
+	$('body').append(linecanvas)	
+	var ctx = linecanvas.getContext("2d");
+	ctx.clearRect ( 0 , 0 , $(linecanvas).width(), $(linecanvas).height() );
+	ddd = data
+	// This will get the first returned node in the jQuery collection.
+	for(i=0;i<data.datasets.length;i++){
+		color = 10+i*10
+		data.datasets[i].fillColor = "rgba("+color+","+color+","+color+",0.2)";
+		data.datasets[i].strokeColor="rgba("+color+","+color+","+color+",1)";
+	}
+	myLineChart = new Chart(ctx).Line(data);
+	get_static()
+})
+}
+drawchart(12);
+
+function get_static(){
+var v1 = myLineChart.datasets[2].points[myLineChart.datasets[2].points.length-1].value
+var v0 = myLineChart.datasets[1].points[myLineChart.datasets[1].points.length-1].value
+var dv = v1-v0
+
+var p1 = myLineChart.datasets[2].points[myLineChart.datasets[2].points.length-2].value
+var p0 = myLineChart.datasets[1].points[myLineChart.datasets[1].points.length-2].value
+var dp = p1-p0
+var delta = '没变'
+if(dv<dp)
+	delta='缩小'
+else if(dv>dp)
+	delta='拉大'
+var str = '当前票数: '+v1+':'+v0+' | 差距:'+dv+' | 差距被('+ delta +')'
+
+$('#static').text(str)
+}
+</script>
+	</body>
+</html>
