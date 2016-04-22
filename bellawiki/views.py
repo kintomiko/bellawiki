@@ -9,6 +9,39 @@ import simplejson
 from time import strftime
 from django.db.models import Count
 from django.db.models import Q
+
+from rest_framework import routers, serializers, viewsets
+from rest_framework.authentication import BasicAuthentication
+# api views
+
+from rest_framework.authentication import SessionAuthentication 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
+# Serializers define the API representation.
+class WorkSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.Work
+        fields = ('id', 'date', 'type', 'title', 'desc')
+
+# ViewSets define the view behavior.
+class WorkViewSet(viewsets.ModelViewSet):
+    authentication_classes=(CsrfExemptSessionAuthentication,BasicAuthentication)
+    tc = datetime.datetime.now()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=13, weeks=0)
+    queryset = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
+    serializer_class = WorkSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'works', WorkViewSet)
+
+
+
+
+
 # Create your views here.
 
 def create_or_edit_work(request):

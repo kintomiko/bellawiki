@@ -95,7 +95,7 @@ class Work(models.Model):
     date = models.DateField('时间', blank=True)
     type = models.IntegerField('类别',choices=WORK_TYPES,
         default=MUSIC)
-    title = models.CharField('标题', max_length=255, unique=True)
+    title = models.CharField(u'标题', max_length=255, unique=True)
     desc = models.CharField('描述', max_length=5000, blank=True)
     files = models.ManyToManyField(File, related_name='works', blank=True)
     tags = models.ManyToManyField(Tag, related_name='works', blank=True)

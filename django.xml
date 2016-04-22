@@ -1,6 +1,6 @@
 <uwsgi>
     <socket>127.0.0.1:8630</socket>
-    <chdir>/home/kin/apps/bellawiki</chdir>
+    <chdir>/root/bellawiki</chdir>
     <pythonpath>..</pythonpath>
     <module>wsgi</module>
 </uwsgi>

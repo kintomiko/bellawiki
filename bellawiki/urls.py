@@ -5,6 +5,8 @@ from django.contrib import admin
 import views
 
 urlpatterns = patterns('',
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/', include(views.router.urls)),
     url(r'^work_details/search$', views.search_work),
     url(r'^work_details/save$', views.save_work),
     url(r'^work_details/add_file$', views.add_file),
