@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^bellawiki/', include('bellawiki.urls')),
+    url(r'^phrases/', include('phrases.urls')),
     (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'admin/login.html'}),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'admin/logout.html'}),
     url(r'^poll/', include('poll.urls')),
