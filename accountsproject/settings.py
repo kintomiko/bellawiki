@@ -142,7 +142,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'accounts',
     'bellawiki',
-    'poll'
+    'poll',
+    'phrases'
     )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
