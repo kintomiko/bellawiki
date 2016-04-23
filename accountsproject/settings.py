@@ -16,7 +16,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-'default': {
+'mysql': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': MYSQL_DB,                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
@@ -24,8 +24,16 @@ DATABASES = {
         'PASSWORD': MYSQL_PASS,
         'HOST': MYSQL_HOST,                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': MYSQL_PORT,                      # Set to empty string for default.
-        }
-        }
+        },
+'default': {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'accounts',
+    'USER': 'kin',
+    'PASSWORD': 'oe9jaacZLbR9pN',
+    'HOST': '192.168.99.100',
+    'PORT': '5432',
+  }
+}
 
 
 CACHES = {
@@ -74,7 +82,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/root/bellawiki/static'
+STATIC_ROOT = '/Users/ylin/workspace/my/bellawiki'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"

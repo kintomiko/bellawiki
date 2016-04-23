@@ -31,7 +31,8 @@ class WorkSerializer(serializers.HyperlinkedModelSerializer):
 class WorkViewSet(viewsets.ModelViewSet):
     authentication_classes=(CsrfExemptSessionAuthentication,BasicAuthentication)
     tc = datetime.datetime.now()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=13, weeks=0)
-    queryset = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
+#    queryset = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
+    queryset = models.Work.objects.all()
     serializer_class = WorkSerializer
 
 # Routers provide an easy way of automatically determining the URL conf.

@@ -58,13 +58,13 @@ class File(models.Model):
     type = models.IntegerField('类别',choices=FILE_TYPES,
         default=MUSIC)
     quality = models.IntegerField('质量', choices=QUALITY_LEVELS,
-        default=3, blank=True)
+        default=3, blank=True, null=True)
     name = models.CharField('文件名', max_length=255)
-    desc = models.CharField('描述', max_length=2000, blank=True)
-    md5 = CharNullField('md5', max_length=32, unique=True, blank=True)
+    desc = models.CharField('描述', max_length=2000, blank=True, null=True)
+    md5 = CharNullField('md5', max_length=32, unique=True, blank=True, null=True)
     url = models.CharField('URL', max_length=2048)
     tags = models.ManyToManyField(Tag, related_name='files', blank=True)
-    date = models.DateField('时间', blank=True)
+    date = models.DateField('时间', blank=True, null=True)
     def __str__(self):
         return self.name.encode("utf8")
 
@@ -92,11 +92,11 @@ class Work(models.Model):
 	(COMPETETION, '比赛'),
     )
     up = models.IntegerField('赞',default=0)
-    date = models.DateField('时间', blank=True)
+    date = models.DateField('时间', blank=True, null=True)
     type = models.IntegerField('类别',choices=WORK_TYPES,
         default=MUSIC)
     title = models.CharField(u'标题', max_length=255, unique=True)
-    desc = models.CharField('描述', max_length=5000, blank=True)
+    desc = models.CharField('描述', max_length=5000, blank=True, null=True)
     files = models.ManyToManyField(File, related_name='works', blank=True)
     tags = models.ManyToManyField(Tag, related_name='works', blank=True)
     def __str__(self):
