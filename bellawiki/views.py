@@ -30,9 +30,9 @@ class WorkSerializer(serializers.HyperlinkedModelSerializer):
 # ViewSets define the view behavior.
 class WorkViewSet(viewsets.ModelViewSet):
     authentication_classes=(CsrfExemptSessionAuthentication,BasicAuthentication)
-    tc = datetime.datetime.now()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=13, weeks=0)
-#    queryset = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
-    queryset = models.Work.objects.all()
+    tc = datetime.datetime.utcnow()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=8, weeks=0)
+    queryset = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
+#    queryset = models.Work.objects.all()
     serializer_class = WorkSerializer
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -229,8 +229,8 @@ def upload(request):
 		return HttpResponse('need csv! ')
 
 def today(request):
-	tc = datetime.datetime.now()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=13, weeks=0)
-	next_tc = datetime.datetime.now()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=37, weeks=0)
+	tc = datetime.datetime.utcnow()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=8, weeks=0)
+	next_tc = datetime.datetime.utcnow()+datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=32, weeks=0)
 	works = models.Work.objects.filter(date__isnull=False, date__month = tc.month, date__day = tc.day).order_by('date')
 	next_works = models.Work.objects.filter(date__isnull=False, date__month = next_tc.month, date__day = next_tc.day).order_by('date')
 	current = lunar.get_lunar_date(tc.year, tc.month, tc.day)
