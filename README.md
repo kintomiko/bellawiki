@@ -1,3 +1,3 @@
 # bellawiki
 
-Django for bellamusic.cn
+Django wiki for http://bellamusic.cn
